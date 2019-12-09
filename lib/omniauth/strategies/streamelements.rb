@@ -3,12 +3,12 @@ require 'omniauth-oauth2'
 module OmniAuth
   module Strategies
     class Streamelements < OmniAuth::Strategies::OAuth2
-      DEFAULT_SCOPE = 'tips:write'
+      DEFAULT_SCOPE = 'tips:write'.freeze
 
       option :name, "streamelements"
 
       option :client_options, {
-        site: 'https://streamelements.com',
+        site: 'https://api.streamelements.com',
         authorize_url: '/oauth2/authorize',
         token_url: '/oauth2/token'
       }
@@ -20,25 +20,33 @@ module OmniAuth
 
       option :authorize_options, [:scope]
 
-      uid{ raw_info['streamelements']['id'] }
+      uid do
+        raw_info['streamelements']['id']
+      end
 
       info do
         {
-          display_name: raw_info['streamelements']['display_name'],
-          name: raw_info['streamelements']['display_name']
+          display_name: raw_info['streamelements']['username'],
+          name: raw_info['streamelements']['displayName']
         }
       end
 
       extra do
-        {
-          raw_info: raw_info
-        }
+        { raw_info: raw_info }
       end
 
       def raw_info
-        binding.pry
-        # @raw_info ||= access_token.get('/api/v1.0/user').parsed
-        @raw_info ||= access_token.get('/oauth2/validate').parsed
+        @raw_info ||= get_raw_info
+      end
+
+      def get_raw_info
+        uri = URI("https://api.streamelements.com/kappa/v2/channels/me")
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        resp = http.get(uri.path, {'Authorization'=>"OAuth #{access_token.token}"})
+        data = JSON.parse(resp.body)
+        data["id"] = data.delete("_id")
+        {"streamelements" => data}
       end
 
       def build_access_token
