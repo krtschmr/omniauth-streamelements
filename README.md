@@ -29,27 +29,22 @@ end
 Here's an example *Auth Hash* available in `request.env['omniauth.auth']`:
 
 ```ruby
-{
-  provider: 'streamelements',
-  uid: 12345678,
-  info: {
-    display_name: 'johndoe',
-    name: 'JohnDoe',
-  },
-  credentials: {
-    token: 'asdfghjklasdfghjklasdfghjkl', # OAuth 2.0 access_token, which you may wish to store
-    expires: false # this will always be false
-  },
-  extra: {
-    raw_info: {
-      twitch: {
-        display_name: 'johndoe',
-        name: 'JohnDoe',
-        _id: 12345678,
-      },
-    }
-  }
-}
+{"provider"=>"streamelements",
+ "uid"=>"5d2....",
+ "info"=>{"display_name"=>"MyHero", "name"=>"MyHero"},
+ "credentials"=>{"token"=>"CvsQp....", "refresh_token"=>"e8N...", "expires_at"=>1578133337, "expires"=>true},
+ "extra"=>
+  {"raw_info"=>
+    {"streamelements"=>
+      {"profile"=>{"headerImage"=>"....", "title"=>"...'s profile"},
+       "provider"=>"twitch",
+       "broadcasterType"=>"affiliate",
+       "suspended"=>false,
+       "providerId"=>"1337",
+       ...       
+       "geo"=>"TH",
+       "id"=>"5d29bb4406f75d15ac92a9c3"}}}}
+
 ```
 
 ## Contributing
